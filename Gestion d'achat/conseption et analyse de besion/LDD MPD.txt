@@ -1,0 +1,74 @@
+#------------------------------------------------------------
+#        Script MySQL.
+#------------------------------------------------------------
+
+
+#------------------------------------------------------------
+# Table: Service
+#------------------------------------------------------------
+
+CREATE TABLE Service(
+        num_service  int (11) Auto_increment  NOT NULL ,
+        code_service Varchar (25) ,
+        nom_service  Varchar (25) ,
+        specialiter  Varchar (25) ,
+        PRIMARY KEY (num_service ) ,
+        UNIQUE (code_service ,nom_service )
+)ENGINE=InnoDB;
+
+
+#------------------------------------------------------------
+# Table: Article
+#------------------------------------------------------------
+
+CREATE TABLE Article(
+        code_article int (11) Auto_increment  NOT NULL ,
+        nom_article  Varchar (50) ,
+        num_cat      Int ,
+        PRIMARY KEY (code_article ) ,
+        UNIQUE (nom_article )
+)ENGINE=InnoDB;
+
+
+#------------------------------------------------------------
+# Table: Utilisateur
+#------------------------------------------------------------
+
+CREATE TABLE Utilisateur(
+        Id_utilisateur  int (11) Auto_increment  NOT NULL ,
+        nom_utilisateur Varchar (30) ,
+        mot_de_passe    Varchar (30) ,
+        num_service     Int ,
+        PRIMARY KEY (Id_utilisateur ) ,
+        UNIQUE (nom_utilisateur )
+)ENGINE=InnoDB;
+
+
+#------------------------------------------------------------
+# Table: catergorie_article
+#------------------------------------------------------------
+
+CREATE TABLE catergorie_article(
+        num_cat     int (11) Auto_increment  NOT NULL ,
+        libelle_cat Varchar (100) ,
+        PRIMARY KEY (num_cat ) ,
+        UNIQUE (libelle_cat )
+)ENGINE=InnoDB;
+
+
+#------------------------------------------------------------
+# Table: achat
+#------------------------------------------------------------
+
+CREATE TABLE achat(
+        qte_demande  Int ,
+        date_achat   Date ,
+        code_article Int NOT NULL ,
+        num_service  Int NOT NULL ,
+        PRIMARY KEY (code_article ,num_service )
+)ENGINE=InnoDB;
+
+ALTER TABLE Article ADD CONSTRAINT FK_Article_num_cat FOREIGN KEY (num_cat) REFERENCES catergorie_article(num_cat);
+ALTER TABLE Utilisateur ADD CONSTRAINT FK_Utilisateur_num_service FOREIGN KEY (num_service) REFERENCES Service(num_service);
+ALTER TABLE achat ADD CONSTRAINT FK_achat_code_article FOREIGN KEY (code_article) REFERENCES Article(code_article);
+ALTER TABLE achat ADD CONSTRAINT FK_achat_num_service FOREIGN KEY (num_service) REFERENCES Service(num_service);
