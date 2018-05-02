@@ -248,7 +248,7 @@
                         <Column editable="true" title="num_service" type="java.lang.String"/>
                         <Column editable="true" title="Code_sevice" type="java.lang.String"/>
                         <Column editable="true" title="nom_service" type="java.lang.String"/>
-                        <Column editable="true" title="Specialit" type="java.lang.String"/>
+                        <Column editable="true" title="sp&#xe9;cialit&#xe9;" type="java.lang.String"/>
                       </Table>
                     </Property>
                   </Properties>

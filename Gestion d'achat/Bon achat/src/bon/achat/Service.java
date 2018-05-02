@@ -128,7 +128,7 @@ public class Service extends javax.swing.JFrame {
                 {null, null, null, null}
             },
             new String [] {
-                "num_service", "Code_sevice", "nom_service", "Specialit"
+                "num_service", "Code_sevice", "nom_service", "spécialité"
             }
         ) {
             Class[] types = new Class [] {
@@ -250,11 +250,9 @@ public class Service extends javax.swing.JFrame {
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
         
-        code=texbox_code.getText();
-        nom=texbox_nom.getText();
-        specialit=texbox_specialit.getText();
+       
         
-     req="insert into service (`Code_sevice`, `nom_service`, `spécialité`) values(?,?,?)";
+    
      if( texbox_code.getText().trim().equals("") || texbox_nom.getText().trim().equals("") || texbox_specialit.getText().trim().equals(""))  
      {
          JOptionPane.showMessageDialog(null,"veuillez remplir les cases sans espace");
@@ -262,6 +260,10 @@ public class Service extends javax.swing.JFrame {
      }else {
          
         try {
+              code=texbox_code.getText();
+              nom=texbox_nom.getText();
+              specialit=texbox_specialit.getText();
+              req="insert into service (`code_service`, `nom_service`, `spécialité`) values(?,?,?)";
               prepared=conx.prepareStatement(req);
               prepared.setString(1, code);
               prepared.setString(2, nom);
@@ -304,7 +306,7 @@ public class Service extends javax.swing.JFrame {
                         code=texbox_code.getText();
                         nom=texbox_nom.getText();
                         specialit=texbox_specialit.getText();
-                        req="UPDATE service SET Code_sevice=?,nom_service=?,spécialité=? WHERE num_service=?";
+                        req="UPDATE service SET code_service=?,nom_service=?,spécialité=? WHERE num_service=?";
                         try {
                                 prepared=conx.prepareStatement(req);
                                 prepared.setString(1, texbox_code.getText());
@@ -312,7 +314,6 @@ public class Service extends javax.swing.JFrame {
                                 prepared.setString(3, specialit);
                                 prepared.setString(4, numero);
                                 prepared.execute();
-                                System.out.print(prepared);
                                 JOptionPane.showMessageDialog(null,"modification est faite avec succès");
                                 
                             } catch (SQLException ex) {
@@ -321,9 +322,10 @@ public class Service extends javax.swing.JFrame {
                                 Logger.getLogger(Service.class.getName()).log(Level.SEVERE, null, ex);
                             }
                          Afficher_table();
-                         jButton4ActionPerformed(evt);
+                         
                     }
         }
+         jButton4ActionPerformed(evt);
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
@@ -346,10 +348,7 @@ public class Service extends javax.swing.JFrame {
                    System.out.print(prepared.toString());
                    prepared.execute();
                    JOptionPane.showMessageDialog(null,"la suppression est terminè ");
-                   //if(prepared.execute())JOptionPane.showMessageDialog(null,"suppression terminer ");
-                  // else JOptionPane.showMessageDialog(null,"le code "+code+" que vous avez saisi pour le supprimer n'exist pas");
-
-                  Afficher_table();
+                   Afficher_table();
                } catch (SQLException ex) {
 
                    JOptionPane.showMessageDialog(null,"la connection n'exist pas veuiller l'activer a l'aide de l'application wampserveur ", "Error", JOptionPane.ERROR_MESSAGE);

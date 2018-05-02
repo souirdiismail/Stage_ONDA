@@ -26,15 +26,17 @@ public class Categories extends javax.swing.JFrame {
     
     Connection cnx=null;
     ResultSet result=null,result1=null;
-    PreparedStatement prepared=null;
+    PreparedStatement prepared=null,prepared1=null;
     String req="",req1="",num_cat="",libelle_cat="",nom_articl="",code_article="";
      int p,p1;
+     
     /**
      * Creates new form Categories
      */
     public Categories() {
        initComponents();
        cnx=connecter.connecterDB();
+      
        req="select libelle_cat from catergorie_article order by num_cat asc";
         try {
             prepared=cnx.prepareStatement(req);
@@ -46,7 +48,8 @@ public class Categories extends javax.swing.JFrame {
         } catch (SQLException ex){
             Logger.getLogger(Categories.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
+         jComboBox_categorie.setSelectedIndex(-1);
+       
         
       
        
@@ -306,9 +309,9 @@ public class Categories extends javax.swing.JFrame {
                         .addComponent(jButton8, javax.swing.GroupLayout.PREFERRED_SIZE, 91, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(jButton6)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 28, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 30, Short.MAX_VALUE)
                 .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 447, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(24, 24, 24))
+                .addGap(22, 22, 22))
         );
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -437,21 +440,38 @@ public class Categories extends javax.swing.JFrame {
       {
           JOptionPane.showMessageDialog(null, "veuiller remplir les zones de text","EREUR",JOptionPane.ERROR_MESSAGE);
       }  else{
-            req="insert into catergorie_article (libelle_cat) values (?)";
+            
             try {
+                req="insert into catergorie_article (libelle_cat) values (?)";
                  prepared=cnx.prepareStatement(req);
                  prepared.setString(1, TextField_libelle.getText());
                  prepared.execute(); 
                  JOptionPane.showMessageDialog(null, "insertion faite avec succe");
                  Afficher_catrgorie();
+                 jComboBox_categorie.removeAllItems();
+                 req="select libelle_cat from catergorie_article order by num_cat asc";
+                try {
+                    prepared=cnx.prepareStatement(req);
+                    result=prepared.executeQuery();
+                    while(result.next())
+                    {jComboBox_categorie.addItem(result.getString("libelle_cat"));} 
+
+
+                } catch (SQLException ex){
+                    Logger.getLogger(Categories.class.getName()).log(Level.SEVERE, null, ex);
+
+                }
+
+                 
             } catch (SQLException ex) {
-                Logger.getLogger(Categories.class.getName()).log(Level.SEVERE, null, ex);
+                JOptionPane.showMessageDialog(null, "libelle: "+TextField_libelle.getText()+" dejat exist ou la conection serveur n'exist pas veuiller l'aciver a l'aide de app wampserver","EREUR",JOptionPane.ERROR_MESSAGE );
+            
             }
 
      
       }
         
-        
+       
         
     }//GEN-LAST:event_jButton1ActionPerformed
 
@@ -567,21 +587,21 @@ public class Categories extends javax.swing.JFrame {
         nom_articl=jTextField_Nom.getText();
         req="select num_cat from catergorie_article where libelle_cat=?";
         try {
-            prepared=cnx.prepareStatement(req);
-            prepared.setString(1, libelle_cat);
-            result=prepared.executeQuery();
-            while(result.next())
-            {
-                num_cat=result.getString("num_cat");
-            }
-            JOptionPane.showMessageDialog(null, nom_articl+""+num_cat );
-            req1="insert into article (nom_article,num_cat) values(?,?)";
-            prepared.setString(1, nom_articl);
-            prepared.setString(2, num_cat);
-            JOptionPane.showMessageDialog(null, prepared);
-            prepared.execute();
-            JOptionPane.showMessageDialog(null, "article est ajouter avec succe");
-            Afficher_article();
+                prepared=cnx.prepareStatement(req);
+                prepared.setString(1, libelle_cat);
+                result=prepared.executeQuery();
+                while(result.next())
+                {
+                    num_cat=result.getString("num_cat");
+                }
+                req1="insert into article (nom_article,num_cat) values(?,?)";
+                prepared=cnx.prepareStatement(req1);
+                prepared.setString(1, nom_articl);
+                prepared.setString(2, num_cat);
+                prepared.execute();
+                JOptionPane.showMessageDialog(null, "article est ajouter avec succe");
+                Afficher_article();
+                
         } catch (SQLException ex) {
             Logger.getLogger(Categories.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -592,36 +612,48 @@ public class Categories extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton6ActionPerformed
 
     private void jButton7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton7ActionPerformed
-       req="select num_cat from catergorie_article where libelle_cat=?";
-       try {
-            prepared=cnx.prepareStatement(req);
-            prepared.setString(1,jComboBox_categorie.getSelectedItem().toString());
-            result1=prepared.executeQuery();
-            while(result1.next())
-            {
-                num_cat=result1.getString("num_cat");
-            }
-        } catch (SQLException ex) {
-            Logger.getLogger(Categories.class.getName()).log(Level.SEVERE, null, ex);
-        } 
        
-        p1=jTable_article.getSelectedRow();
-        code_article=jTable_article.getModel().getValueAt(p1, 0).toString();
-        JOptionPane.showMessageDialog(null, code_article);
-        req1="UPDATE `article` SET `nom_article`=?,`num_cat`=? WHERE `code_article`=?";
-        try {
-            prepared=cnx.prepareStatement(req1);
-            prepared.setString(1, jTextField_Nom.getText());
-            prepared.setString(2, num_cat);
-            prepared.setString(3, code_article);
-            prepared.execute();
-            JOptionPane.showMessageDialog(null, "modification faite avec succe");
-        } catch (SQLException ex) {
-            Logger.getLogger(Categories.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        if(jTable_article.getSelectedRow()==-1)  
+       {
+           JOptionPane.showMessageDialog(null,"Veuiller afficher les articles dans le tableu par le button afficher et selectioner une ligne pour modifier","information",JOptionPane.ERROR_MESSAGE);
+
+         }else {    
+                    if(jTextField_Nom.getText().trim().equals("") || jComboBox_categorie.getSelectedIndex()==-1)
+                    { 
+                        JOptionPane.showMessageDialog(null,"veuillez remplir les zones de text sans espace si vous voulez modifier","EREUR",JOptionPane.ERROR_MESSAGE);
+                    }else{
+                            req="select num_cat from catergorie_article where libelle_cat=?";
+                           try {
+                                prepared=cnx.prepareStatement(req);
+                                prepared.setString(1,jComboBox_categorie.getSelectedItem().toString());
+                                result1=prepared.executeQuery();
+                                while(result1.next())
+                                {
+                                    num_cat=result1.getString("num_cat");
+                                }
+                            } catch (SQLException ex) {
+                                Logger.getLogger(Categories.class.getName()).log(Level.SEVERE, null, ex);
+                            } 
+
+                            p1=jTable_article.getSelectedRow();
+                            code_article=jTable_article.getModel().getValueAt(p1, 0).toString();
+                            JOptionPane.showMessageDialog(null, code_article);
+                            req1="UPDATE `article` SET `nom_article`=?,`num_cat`=? WHERE `code_article`=?";
+                            try {
+                                prepared=cnx.prepareStatement(req1);
+                                prepared.setString(1, jTextField_Nom.getText());
+                                prepared.setString(2, num_cat);
+                                prepared.setString(3, code_article);
+                                prepared.execute();
+                                JOptionPane.showMessageDialog(null, "modification faite avec succe");
+                            } catch (SQLException ex) {
+                                Logger.getLogger(Categories.class.getName()).log(Level.SEVERE, null, ex);
+                            }
         
         
-        Afficher_article();
+                    Afficher_article();
+                    }
+        }         
     }//GEN-LAST:event_jButton7ActionPerformed
 
     private void jButton8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton8ActionPerformed
@@ -649,7 +681,7 @@ public class Categories extends javax.swing.JFrame {
         jTextField_Nom.setText(jTable_article.getModel().getValueAt(p1, 1).toString());
         jComboBox_categorie.setSelectedItem(jTable_article.getModel().getValueAt(p1, 2).toString());
         
-       // jTable_categorie.setSelectionModel();
+       
         
         
           
@@ -665,11 +697,7 @@ public class Categories extends javax.swing.JFrame {
         } catch (SQLException ex) {
             Logger.getLogger(Categories.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
-        
-        
-        
-        
+         
     }//GEN-LAST:event_jButton9ActionPerformed
 
     private void jTextField1KeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextField1KeyPressed
@@ -686,7 +714,6 @@ public class Categories extends javax.swing.JFrame {
         try {
             prepared=cnx.prepareStatement(req);
             result=prepared.executeQuery();
-           
             jTable_article.setModel(DbUtils.resultSetToTableModel(result));
             
         } catch (SQLException ex) {
