@@ -173,7 +173,7 @@ public class formule_authentification extends javax.swing.JFrame {
                 {null, null, null, null}
             },
             new String [] {
-                "Id_utilisateur", "nom_utilisateur", "mot_de_passe", "num_service"
+                "Id_utilisateur", "nom_utilisateur", "mot_de_passe", "nom_service"
             }
         ));
         jTable2.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -236,83 +236,92 @@ public class formule_authentification extends javax.swing.JFrame {
        
         texbox_nom.setText("");
         texbox_Password.setText("");
-       
+        jComboBox_nonService.setSelectedIndex(-1);
         
         
         
     }
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        if(texbox_nom.getText().trim().equals("") || texbox_Password.getText().trim().equals("") || jComboBox_nonService.getSelectedIndex()==-1 )
+          { 
+              JOptionPane.showMessageDialog(null,"veuillez remplir les zones de text sans espace si vous voulez modifier","EREUR",JOptionPane.ERROR_MESSAGE);
+           }else{
 
-        
-       req1="select num_service from service where nom_service=? ";
-       try {
-           
-            prepared=conx.prepareStatement(req1);
-            prepared.setString(1, jComboBox_nonService.getSelectedItem().toString());
-            result=prepared.executeQuery(); 
-            while(result.next())
-            {
-             numero=result.getString("num_service");
-            }
-            
-        } catch (SQLException ex) {
-            Logger.getLogger(formule_authentification.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        
-     
-       req="INSERT INTO `utilisateur`(`nom_utilisateur`, `mot_de_passe`, `num_service`) VALUES(?,?,?)";
-        try {
-            prepared=conx.prepareStatement(req);
-            prepared.setString(1,texbox_nom.getText() );
-            prepared.setString(2, texbox_Password.getText());
-            prepared.setString(3, numero);
-            prepared.execute();
-            JOptionPane.showMessageDialog(null,"ajouter avec succe");
+                req1="select num_service from service where nom_service=? ";
+                try {
 
-        } catch (SQLException ex) {
-            Logger.getLogger(formule_authentification.class.getName()).log(Level.SEVERE, null, ex);
+                     prepared=conx.prepareStatement(req1);
+                     prepared.setString(1, jComboBox_nonService.getSelectedItem().toString());
+                     result=prepared.executeQuery(); 
+                     while(result.next())
+                     {
+                      numero=result.getString("num_service");
+                     }
+
+                 } catch (SQLException ex) {
+                     Logger.getLogger(formule_authentification.class.getName()).log(Level.SEVERE, null, ex);
+                 }
+
+
+                req="INSERT INTO `utilisateur`(`nom_utilisateur`, `mot_de_passe`, `num_service`) VALUES(?,?,?)";
+                 try {
+                     prepared=conx.prepareStatement(req);
+                     prepared.setString(1,texbox_nom.getText() );
+                     prepared.setString(2, texbox_Password.getText());
+                     prepared.setString(3, numero);
+                     prepared.execute();
+                     JOptionPane.showMessageDialog(null,"ajouter avec succe");
+
+                 } catch (SQLException ex) {
+                     Logger.getLogger(formule_authentification.class.getName()).log(Level.SEVERE, null, ex);
+                 }
+                 Afficher_table();
         }
 
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         // TODO add your handling code here:
+       if(jTable2.getSelectedRow()==-1)  
+       {
+           JOptionPane.showMessageDialog(null,"Veuiller afficher et selectioner l'utilisateur  dans le tableau par le button afficher et selectioner une ligne pour modifier","information",JOptionPane.ERROR_MESSAGE);
+
+         }else {    
+                 if(texbox_nom.getText().trim().equals("") || texbox_Password.getText().trim().equals("") || jComboBox_nonService.getSelectedIndex()==-1 )
+                   { 
+                      JOptionPane.showMessageDialog(null,"veuillez remplir les zones de text sans espace si vous voulez modifier","EREUR",JOptionPane.ERROR_MESSAGE);
+                    }else{
+                        nom=texbox_nom.getText();
+                        pass=texbox_Password.getText();
+                        req1="select num_service from service where nom_service=?";
+                        try {
+                         prepared=conx.prepareStatement(req1);
+                         prepared.setString(1,jComboBox_nonService.getSelectedItem().toString());
+                         result=prepared.executeQuery();
+                         while(result.next())
+                          {
+                           numero=result.getString("num_service");
+                          }
+                            } catch (SQLException ex) {
+                                  Logger.getLogger(Categories.class.getName()).log(Level.SEVERE, null, ex);
+                           } 
+
+                            req="UPDATE `utilisateur` SET `nom_utilisateur`=?,`mot_de_passe`=?,`num_service`=? WHERE `Id_utilisateur`=?";
+                            try {
+                                prepared=conx.prepareStatement(req);
+                                prepared.setString(1,texbox_nom.getText());
+                                prepared.setString(2,texbox_Password.getText());
+                                prepared.setString(3,numero);
+                                prepared.setString(4,jTable2.getModel().getValueAt(jTable2.getSelectedRow(), 0).toString());
+                                prepared.execute();
+                                JOptionPane.showMessageDialog(null,"modification bien faite");
+                            } catch (SQLException ex) {
+                                Logger.getLogger(formule_authentification.class.getName()).log(Level.SEVERE, null, ex);
+                            }
+                            Afficher_table();
        
-        nom=texbox_nom.getText();
-        pass=texbox_Password.getText();
-        req1="select num_service from service where nom_service=?";
-        try {
-         prepared=conx.prepareStatement(req1);
-         prepared.setString(1,jComboBox_nonService.getSelectedItem().toString());
-         result=prepared.executeQuery();
-         while(result.next())
-          {
-           numero=result.getString("num_service");
-          }
-            } catch (SQLException ex) {
-                  Logger.getLogger(Categories.class.getName()).log(Level.SEVERE, null, ex);
-           } 
-
-        
-         JOptionPane.showMessageDialog(null,numero);
-        
-        
-        
-      req="UPDATE `utilisateur` SET `nom_utilisateur`=?,`mot_de_passe`=?,`num_service`=? where Id_utilisateur`=?";
-        try {
-           prepared=conx.prepareStatement(req);
-
-            prepared.setString(1,nom);
-            prepared.setString(2,prenom);
-            prepared.setString(3,email);
-            prepared.setString(4,pass);
-           // prepared.setString(5,);
-            prepared.execute();
-
-            JOptionPane.showMessageDialog(null,"modification bien faite");
-        } catch (SQLException ex) {
-            Logger.getLogger(formule_authentification.class.getName()).log(Level.SEVERE, null, ex);
         }
+       }
 
     }//GEN-LAST:event_jButton2ActionPerformed
 

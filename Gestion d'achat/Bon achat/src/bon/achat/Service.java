@@ -296,7 +296,7 @@ public class Service extends javax.swing.JFrame {
        
    if(jTable1.getSelectedRow()==-1)  
        {
-           JOptionPane.showMessageDialog(null,"Veuiller afficher les services dans le tableu par le button afficher et selectioner une ligne pour modifier","information",JOptionPane.ERROR_MESSAGE);
+           JOptionPane.showMessageDialog(null,"Veuiller afficher et selectioner les services dans le tableau par le button afficher et selectioner une ligne pour modifier","information",JOptionPane.ERROR_MESSAGE);
 
          }else {    
                     if(texbox_code.getText().trim().equals("") || texbox_nom.getText().trim().equals("") || texbox_specialit.getText().trim().equals("") )
