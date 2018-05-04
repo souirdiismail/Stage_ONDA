@@ -251,10 +251,7 @@ public class Service extends javax.swing.JFrame {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
-        
-       
-        
-    
+     
      if( texbox_code.getText().trim().equals("") || texbox_nom.getText().trim().equals("") || texbox_specialit.getText().trim().equals(""))  
      {
          JOptionPane.showMessageDialog(null,"veuillez remplir les cases sans espace");
