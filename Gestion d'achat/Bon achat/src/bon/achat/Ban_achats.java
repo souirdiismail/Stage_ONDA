@@ -19,10 +19,14 @@ import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
 import java.awt.Desktop;
 import java.awt.event.KeyEvent;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -41,7 +45,7 @@ public class Ban_achats extends javax.swing.JFrame {
      Connection conx=null;
     PreparedStatement prepared=null;
     ResultSet result=null,result1=null;
-    String code,nom,specialit,req1="" ,req="",numero="",nom_service,code_service,dateachat;
+    String code,nom,specialit,req1="" ,req="",numero="",nom_service,code_service,dateachat,articles;
      
     public Ban_achats() {
         initComponents();
@@ -101,6 +105,9 @@ public class Ban_achats extends javax.swing.JFrame {
         jButton2 = new javax.swing.JButton();
         jTextField_service = new javax.swing.JTextField();
         jButton3 = new javax.swing.JButton();
+        jLabel6 = new javax.swing.JLabel();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        jTextArea_observation = new javax.swing.JTextArea();
         jPanel3 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
@@ -117,7 +124,7 @@ public class Ban_achats extends javax.swing.JFrame {
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 0, Short.MAX_VALUE)
+            .addGap(0, 1029, Short.MAX_VALUE)
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -156,6 +163,12 @@ public class Ban_achats extends javax.swing.JFrame {
             }
         });
 
+        jLabel6.setText("Observations :");
+
+        jTextArea_observation.setColumns(20);
+        jTextArea_observation.setRows(5);
+        jScrollPane2.setViewportView(jTextArea_observation);
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
@@ -168,20 +181,18 @@ public class Ban_achats extends javax.swing.JFrame {
                             .addComponent(jLabel4)
                             .addComponent(jLabel1)
                             .addComponent(jLabel2)
-                            .addComponent(jLabel3))
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel2Layout.createSequentialGroup()
-                                .addGap(67, 67, 67)
-                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(jTextField_Qte)
-                                    .addComponent(jDateChooser1, javax.swing.GroupLayout.DEFAULT_SIZE, 160, Short.MAX_VALUE)))
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(jComboBox_Article, 0, 160, Short.MAX_VALUE)
-                                    .addComponent(jTextField_service)))))
+                            .addComponent(jLabel3)
+                            .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(61, 61, 61)
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jComboBox_Article, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                .addComponent(jTextField_service)
+                                .addComponent(jDateChooser1, javax.swing.GroupLayout.DEFAULT_SIZE, 166, Short.MAX_VALUE)
+                                .addComponent(jTextField_Qte))
+                            .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGap(62, 62, 62)
+                        .addGap(87, 87, 87)
                         .addComponent(jButton1)
                         .addGap(18, 18, 18)
                         .addComponent(jButton2)
@@ -208,12 +219,19 @@ public class Ban_achats extends javax.swing.JFrame {
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jTextField_Qte, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel4))
-                .addGap(71, 71, 71)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addGap(27, 27, 27)
+                        .addComponent(jLabel6))
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(121, Short.MAX_VALUE))
+                .addGap(40, 40, 40))
         );
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
@@ -242,25 +260,23 @@ public class Ban_achats extends javax.swing.JFrame {
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 603, Short.MAX_VALUE)
-                .addContainerGap())
-            .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(jPanel3Layout.createSequentialGroup()
-                    .addGap(20, 20, 20)
-                    .addComponent(jButton5)
-                    .addContainerGap(528, Short.MAX_VALUE)))
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addGap(10, 10, 10)
+                        .addComponent(jButton5)
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 624, Short.MAX_VALUE)
+                        .addContainerGap())))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 249, Short.MAX_VALUE)
-                .addGap(45, 45, 45))
-            .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
-                    .addContainerGap(261, Short.MAX_VALUE)
-                    .addComponent(jButton5)
-                    .addGap(21, 21, 21)))
+                .addGap(11, 11, 11)
+                .addComponent(jButton5)
+                .addContainerGap())
         );
 
         jLabel5.setText("Recherche par ");
@@ -296,7 +312,7 @@ public class Ban_achats extends javax.swing.JFrame {
                         .addComponent(jLabel5)
                         .addGap(293, 293, 293))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel4Layout.createSequentialGroup()
-                        .addComponent(jDateChooser2, javax.swing.GroupLayout.DEFAULT_SIZE, 153, Short.MAX_VALUE)
+                        .addComponent(jDateChooser2, javax.swing.GroupLayout.DEFAULT_SIZE, 174, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 128, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(95, 95, 95)
@@ -346,7 +362,7 @@ public class Ban_achats extends javax.swing.JFrame {
                         .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE))))
+                        .addGap(0, 9, Short.MAX_VALUE))))
         );
 
         pack();
@@ -476,7 +492,7 @@ public class Ban_achats extends javax.swing.JFrame {
         Document doc=new Document();
          try {
               SimpleDateFormat dateFormat=new SimpleDateFormat("yyyy-MM-dd");
-              String date = dateFormat.format(jDateChooser1.getDate());
+              String date = dateFormat.format(jDateChooser2.getDate());
               //req="SELECT code_service,nom_service,date_achat,nom_article,qte_demande FROM article inner join achat ON article.code_article=achat.code_article INNER join service on service.num_service=achat.num_service WHERE date_achat LIKE '"+date+"%'";
               req="SELECT code_service,nom_service,date_achat,nom_article,qte_demande FROM article inner join achat ON article.code_article=achat.code_article INNER join service on service.num_service=achat.num_service WHERE date_achat LIKE '"+date+"%' and nom_service='"+jTextField_service.getText()+"'";
        
@@ -489,7 +505,7 @@ public class Ban_achats extends javax.swing.JFrame {
              img.scaleAbsoluteHeight(170);
              img.setAlignment(Image.ALIGN_CENTER);
              doc.add(img);
-             PdfPTable table=new PdfPTable(5);
+             PdfPTable table=new PdfPTable(7);
              table.setWidthPercentage(100);
              table.setHorizontalAlignment(200);
              PdfPCell cell;
@@ -508,43 +524,141 @@ public class Ban_achats extends javax.swing.JFrame {
              
              cell=new PdfPCell(new Phrase("Magasin livreur",FontFactory.getFont("Tahoma",12)));
              cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+             cell.setColspan(2);
              table.addCell(cell);
              
-             cell=new PdfPCell(new Phrase("Code magasin",FontFactory.getFont("Tahoma",12)));
+             cell=new PdfPCell(new Phrase("Code magasinn",FontFactory.getFont("Tahoma",12)));
              cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+             cell.setColspan(2);
              table.addCell(cell);
-             //////////afichage data base
-        while(result.next()){    
-            nom_service=result.getString("nom_service");
-            code_service=result.getString("code_service");
-            dateachat=result.getString("date_achat");
-                   
-        }
-             cell=new PdfPCell(new Phrase(nom_service,FontFactory.getFont("Tahoma",12)));
+             //ligne 2
+             
+             cell=new PdfPCell(new Phrase(" ",FontFactory.getFont("Tahoma",12)));
              cell.setHorizontalAlignment(Element.ALIGN_CENTER);
              table.addCell(cell);
              
-             cell=new PdfPCell(new Phrase(code_service,FontFactory.getFont("Tahoma",12)));
+             cell=new PdfPCell(new Phrase(" ",FontFactory.getFont("Tahoma",12)));
              cell.setHorizontalAlignment(Element.ALIGN_CENTER);
              table.addCell(cell);
              
-             cell=new PdfPCell(new Phrase(dateachat,FontFactory.getFont("Tahoma",12)));
+             cell=new PdfPCell(new Phrase(" ",FontFactory.getFont("Tahoma",12)));
              cell.setHorizontalAlignment(Element.ALIGN_CENTER);
              table.addCell(cell);
              
-             cell=new PdfPCell(new Phrase("",FontFactory.getFont("Tahoma",12)));
+             cell=new PdfPCell(new Phrase(" ",FontFactory.getFont("Tahoma",12)));
              cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+             cell.setColspan(2);
              table.addCell(cell);
              
-             cell=new PdfPCell(new Phrase("",FontFactory.getFont("Tahoma",12)));
+             cell=new PdfPCell(new Phrase(" ",FontFactory.getFont("Tahoma",12)));
              cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+             cell.setColspan(2);
              table.addCell(cell);
-         
+             
         
+             ///ligne3
+             cell=new PdfPCell(new Phrase("Articles",FontFactory.getFont("Tahoma",12)));
+             cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+             cell.setColspan(2);
+             table.addCell(cell);
+             
+             cell=new PdfPCell(new Phrase("Quantite demandee",FontFactory.getFont("Tahoma",12)));
+             cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+             table.addCell(cell);
+             
+             cell=new PdfPCell(new Phrase("Quantite livraiee",FontFactory.getFont("Tahoma",12)));
+             cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+             table.addCell(cell);
+             
+             cell=new PdfPCell(new Phrase("Code centre",FontFactory.getFont("Tahoma",12)));
+             cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+             
+             table.addCell(cell);
+             
+             cell=new PdfPCell(new Phrase("Rubrique",FontFactory.getFont("Tahoma",12)));
+             cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+             table.addCell(cell);
+             
+             cell=new PdfPCell(new Phrase("Estimation",FontFactory.getFont("Tahoma",12)));
+             cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+             table.addCell(cell);
+            ////
+             ///ligne4
+            while(result.next()){
+             cell=new PdfPCell(new Phrase("-"+result.getString("nom_article"),FontFactory.getFont("Tahoma",12)));
+             cell.setColspan(2);
+             table.addCell(cell);
+             
+             cell=new PdfPCell(new Phrase(result.getString("qte_demande"),FontFactory.getFont("Tahoma",12)));
+             cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+             table.addCell(cell);
+             
+             cell=new PdfPCell(new Phrase(" ",FontFactory.getFont("Tahoma",12)));
+             cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+             table.addCell(cell);
+             
+             cell=new PdfPCell(new Phrase(" ",FontFactory.getFont("Tahoma",12)));
+             cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+             
+             table.addCell(cell);
+             
+             cell=new PdfPCell(new Phrase(" ",FontFactory.getFont("Tahoma",12)));
+             cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+             table.addCell(cell);
+             
+             cell=new PdfPCell(new Phrase(" ",FontFactory.getFont("Tahoma",12)));
+             cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+             table.addCell(cell);
+            }
+             ///ligne5 observation
+             cell=new PdfPCell(new Phrase("Observations : "+jTextArea_observation.getText()+"\n\n",FontFactory.getFont("Tahoma",12)));
+             cell.setColspan(7);
+             table.addCell(cell);
+             //////
+             /////ligne6
+             cell=new PdfPCell(new Phrase("Exemplaire",FontFactory.getFont("Tahoma",12)));
+             cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+             table.addCell(cell);
+             
+             cell=new PdfPCell(new Phrase("signature service demandeur",FontFactory.getFont("Tahoma",12)));
+             cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+             cell.setColspan(2);
+             table.addCell(cell);
+             
+             cell=new PdfPCell(new Phrase("Unite de stockage",FontFactory.getFont("Tahoma",12)));
+             cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+             cell.setColspan(2);
+             table.addCell(cell);
+             
+             cell=new PdfPCell(new Phrase("Controle",FontFactory.getFont("Tahoma",12)));
+             cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+             cell.setColspan(2);
+             table.addCell(cell);
+             ////
+               /////ligne7
+               
+             cell=new PdfPCell(new Phrase("\n\n\n\n\n\n\n\n\n",FontFactory.getFont("Tahoma",12)));
+             cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+             table.addCell(cell);
+             
+             cell=new PdfPCell(new Phrase("\n\n\n\n\n\n\n\n\n",FontFactory.getFont("Tahoma",12)));
+             cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+             cell.setColspan(2);
+             table.addCell(cell);
+             
+             cell=new PdfPCell(new Phrase("\n\n\n\n\n\n\n\n\n",FontFactory.getFont("Tahoma",12)));
+             cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+             cell.setColspan(2);
+             table.addCell(cell);
+             
+             cell=new PdfPCell(new Phrase("",FontFactory.getFont("Tahoma",12)));
+             cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+             cell.setColspan(2);
+             table.addCell(cell);
+             ////
              
              
              
-             //////////
              doc.add(table);
              doc.close();
              Desktop.getDesktop().open(new File("C:\\Users\\Administrator\\Desktop\\achat.pdf"));
@@ -623,12 +737,15 @@ public class Ban_achats extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTable jTable1;
+    private javax.swing.JTextArea jTextArea_observation;
     private javax.swing.JTextField jTextField1;
     private javax.swing.JTextField jTextField_Qte;
     private javax.swing.JTextField jTextField_service;
