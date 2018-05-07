@@ -32,6 +32,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
@@ -45,7 +46,7 @@ public class Ban_achats extends javax.swing.JFrame {
      Connection conx=null;
     PreparedStatement prepared=null;
     ResultSet result=null,result1=null;
-    String code,nom,specialit,req1="" ,req="",numero="",nom_service,code_service,dateachat,articles;
+    String code,nom,specialit,req1="" ,req="",req2="",numero="",nom_service,code_service,dateachat,articles;
      
     public Ban_achats() {
         initComponents();
@@ -58,12 +59,13 @@ public class Ban_achats extends javax.swing.JFrame {
                while(result.next())
                {
                    jComboBox_Article.addItem(result.getString("nom_article"));
+                   
                }
          } catch (SQLException ex) {
              Logger.getLogger(Ban_achats.class.getName()).log(Level.SEVERE, null, ex);
          }
          
-        req1="select nom_service from service where num_service=? ";
+        req1="select code_service,nom_service from service where num_service=? ";
          try {
              prepared=conx.prepareStatement(req1);
              prepared.setString(1, numservice);
@@ -71,6 +73,7 @@ public class Ban_achats extends javax.swing.JFrame {
              while(result1.next())
              {
                  nom=result1.getString("nom_service");
+                 code_service=result1.getString("code_service");
              }
              
              jTextField_service.setText(nom);
@@ -155,6 +158,11 @@ public class Ban_achats extends javax.swing.JFrame {
         });
 
         jButton2.setText("Modifier");
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
 
         jButton3.setText("Imprimer");
         jButton3.addActionListener(new java.awt.event.ActionListener() {
@@ -192,11 +200,11 @@ public class Ban_achats extends javax.swing.JFrame {
                                 .addComponent(jTextField_Qte))
                             .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGap(87, 87, 87)
-                        .addComponent(jButton1)
+                        .addGap(69, 69, 69)
+                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
-                        .addComponent(jButton2)
-                        .addGap(41, 41, 41)
+                        .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 81, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(31, 31, 31)
                         .addComponent(jButton3)))
                 .addContainerGap(20, Short.MAX_VALUE))
         );
@@ -228,23 +236,28 @@ public class Ban_achats extends javax.swing.JFrame {
                         .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(40, 40, 40))
         );
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null}
             },
             new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
+                "code_service", "nom_service", "date_achat", "nom_article", "qte_demande"
             }
         ));
+        jTable1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jTable1MouseClicked(evt);
+            }
+        });
         jScrollPane1.setViewportView(jTable1);
 
         jButton5.setText("Afficher");
@@ -369,10 +382,20 @@ public class Ban_achats extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
-      SimpleDateFormat dateFormat=new SimpleDateFormat("yyyy-MM-dd");
-            String date = dateFormat.format(jDateChooser2.getDate());
-        req="SELECT code_service,nom_service,date_achat,nom_article,qte_demande FROM article inner join achat ON article.code_article=achat.code_article INNER join service on service.num_service=achat.num_service WHERE date_achat LIKE '"+date+"%'";
-        try {
+       
+        
+        if(jDateChooser2.getDate()==null){
+            JOptionPane.showConfirmDialog(null, "veuiller saisir une date pour rechercher");
+        }
+    else {
+            SimpleDateFormat dateFormat=new SimpleDateFormat("yyyy-MM-dd");
+           String  date = dateFormat.format(jDateChooser2.getDate());
+            req="SELECT code_service,nom_service,date_achat,nom_article,qte_demande FROM article inner join achat ON article.code_article=achat.code_article INNER join service on service.num_service=achat.num_service WHERE date_achat LIKE '"+date+"%' and nom_service='"+jTextField_service.getText()+"'";
+      
+        
+        
+            
+     try {
             
              prepared=conx.prepareStatement(req);
              result=prepared.executeQuery();
@@ -385,7 +408,7 @@ public class Ban_achats extends javax.swing.JFrame {
             Logger.getLogger(Service.class.getName()).log(Level.SEVERE, null, ex);
          }
         
-        
+         }
     }//GEN-LAST:event_jButton4ActionPerformed
 
     public void Afficher_table() {
@@ -412,7 +435,7 @@ public class Ban_achats extends javax.swing.JFrame {
 
         if(jTextField_Qte.getText().trim().equals("") || jComboBox_Article.getSelectedIndex()==-1||jDateChooser1.getDate()==null)
         {
-            JOptionPane.showMessageDialog(null,"veuillez remplir les cases qui sont vide");
+            JOptionPane.showMessageDialog(null,"veuillez remplir les cases qui sont vide","EREUR",JOptionPane.ERROR_MESSAGE);
 
         }else {
             result=null;
@@ -493,7 +516,6 @@ public class Ban_achats extends javax.swing.JFrame {
          try {
               SimpleDateFormat dateFormat=new SimpleDateFormat("yyyy-MM-dd");
               String date = dateFormat.format(jDateChooser2.getDate());
-              //req="SELECT code_service,nom_service,date_achat,nom_article,qte_demande FROM article inner join achat ON article.code_article=achat.code_article INNER join service on service.num_service=achat.num_service WHERE date_achat LIKE '"+date+"%'";
               req="SELECT code_service,nom_service,date_achat,nom_article,qte_demande FROM article inner join achat ON article.code_article=achat.code_article INNER join service on service.num_service=achat.num_service WHERE date_achat LIKE '"+date+"%' and nom_service='"+jTextField_service.getText()+"'";
        
              prepared=conx.prepareStatement(req);
@@ -532,16 +554,16 @@ public class Ban_achats extends javax.swing.JFrame {
              cell.setColspan(2);
              table.addCell(cell);
              //ligne 2
-             
-             cell=new PdfPCell(new Phrase(" ",FontFactory.getFont("Tahoma",12)));
+           
+             cell=new PdfPCell(new Phrase(jTextField_service.getText(),FontFactory.getFont("Tahoma",12)));
              cell.setHorizontalAlignment(Element.ALIGN_CENTER);
              table.addCell(cell);
              
-             cell=new PdfPCell(new Phrase(" ",FontFactory.getFont("Tahoma",12)));
+             cell=new PdfPCell(new Phrase(code_service,FontFactory.getFont("Tahoma",12)));
              cell.setHorizontalAlignment(Element.ALIGN_CENTER);
              table.addCell(cell);
              
-             cell=new PdfPCell(new Phrase(" ",FontFactory.getFont("Tahoma",12)));
+             cell=new PdfPCell(new Phrase(date,FontFactory.getFont("Tahoma",12)));
              cell.setHorizontalAlignment(Element.ALIGN_CENTER);
              table.addCell(cell);
              
@@ -635,9 +657,9 @@ public class Ban_achats extends javax.swing.JFrame {
              cell.setColspan(2);
              table.addCell(cell);
              ////
-               /////ligne7
+               ////ligne7
                
-             cell=new PdfPCell(new Phrase("\n\n\n\n\n\n\n\n\n",FontFactory.getFont("Tahoma",12)));
+             cell=new PdfPCell(new Phrase("03",FontFactory.getFont("Tahoma",12)));
              cell.setHorizontalAlignment(Element.ALIGN_CENTER);
              table.addCell(cell);
              
@@ -655,9 +677,102 @@ public class Ban_achats extends javax.swing.JFrame {
              cell.setHorizontalAlignment(Element.ALIGN_CENTER);
              cell.setColspan(2);
              table.addCell(cell);
-             ////
+             //new table*****************************************
+             doc.add(table);
+             table=new PdfPTable(6);
+             table.setWidthPercentage(100);
+             table.setHorizontalAlignment(200);
              
              
+             //
+             ///ligne8
+             cell=new PdfPCell(new Phrase("rubrique :",FontFactory.getFont("Tahoma",12)));
+             cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+              table.addCell(cell);
+              
+             cell=new PdfPCell(new Phrase("  ",FontFactory.getFont("Tahoma",12)));
+             cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+             cell.setColspan(2);
+             table.addCell(cell);
+             
+             cell=new PdfPCell(new Phrase("",FontFactory.getFont("Tahoma",12)));
+             cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+             cell.setColspan(3);
+             cell.setRowspan(8);
+             table.addCell(cell);
+             //
+             //ligne8
+             cell=new PdfPCell(new Phrase("Dotation",FontFactory.getFont("Tahoma",12)));
+             cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+             table.addCell(cell);
+             cell=new PdfPCell(new Phrase("  ",FontFactory.getFont("Tahoma",12)));
+             cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+             cell.setColspan(2);
+             table.addCell(cell);
+             //ligne9
+             cell=new PdfPCell(new Phrase("Montant engager",FontFactory.getFont("Tahoma",12)));
+             cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+             table.addCell(cell);
+             
+             cell=new PdfPCell(new Phrase("  ",FontFactory.getFont("Tahoma",12)));
+             cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+             cell.setColspan(2);
+             table.addCell(cell);
+             //
+             ///ligne10
+             cell=new PdfPCell(new Phrase("Montant en cour",FontFactory.getFont("Tahoma",12)));
+             cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+             table.addCell(cell);
+             
+             cell=new PdfPCell(new Phrase("  ",FontFactory.getFont("Tahoma",12)));
+             cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+             cell.setColspan(2);
+             table.addCell(cell);
+             
+             //
+             ///ligne11
+             cell=new PdfPCell(new Phrase("Total",FontFactory.getFont("Tahoma",12)));
+             cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+             table.addCell(cell);
+             
+             cell=new PdfPCell(new Phrase("  ",FontFactory.getFont("Tahoma",12)));
+             cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+             cell.setColspan(2);
+             table.addCell(cell);
+             
+             //
+             ///ligne12
+             cell=new PdfPCell(new Phrase("ReliQuat",FontFactory.getFont("Tahoma",12)));
+             cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+             table.addCell(cell);
+             
+             cell=new PdfPCell(new Phrase("  ",FontFactory.getFont("Tahoma",12)));
+             cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+             cell.setColspan(2);
+             table.addCell(cell);
+             
+             //
+             ///ligne13
+             cell=new PdfPCell(new Phrase("Depassement",FontFactory.getFont("Tahoma",12)));
+             cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+             table.addCell(cell);
+             
+             cell=new PdfPCell(new Phrase("  ",FontFactory.getFont("Tahoma",12)));
+             cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+             cell.setColspan(2);
+             table.addCell(cell);
+             //
+             ///ligne14
+             cell=new PdfPCell(new Phrase("Date",FontFactory.getFont("Tahoma",12)));
+             cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+             table.addCell(cell);
+             
+             cell=new PdfPCell(new Phrase("  ",FontFactory.getFont("Tahoma",12)));
+             cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+             cell.setColspan(2);
+             table.addCell(cell);
+           
+            
              
              doc.add(table);
              doc.close();
@@ -687,6 +802,82 @@ public class Ban_achats extends javax.swing.JFrame {
         
         
     }//GEN-LAST:event_jButton3ActionPerformed
+
+    private void jTable1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTable1MouseClicked
+        
+        int p=jTable1.getSelectedRow();
+        jDateChooser1.setDate((Date)jTable1.getModel().getValueAt(p, 2));
+        jComboBox_Article.setSelectedItem(jTable1.getModel().getValueAt(p, 3));
+        jTextField_Qte.setText(jTable1.getModel().getValueAt(p, 4).toString());
+      
+    }//GEN-LAST:event_jTable1MouseClicked
+
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        
+        
+        if(jComboBox_Article.getSelectedIndex()==-1 || jDateChooser1.getDate()==null || jTextField_Qte.getText().trim().equals(""))
+        {
+            JOptionPane.showConfirmDialog(null, "veuiller remplire les sone de texte pour modifier ","EREUR",JOptionPane.ERROR_MESSAGE);
+        }else{
+            req1="select code_article from `article` where nom_article=?";
+            try {
+                
+                prepared=conx.prepareStatement(req1);
+                prepared.setString(1, jComboBox_Article.getSelectedItem().toString());
+                result=prepared.executeQuery();
+                while(result.next())
+                {
+                    code=result.getString("code_article");
+                }
+            } catch (SQLException ex) {
+                Afficher_table();
+                Logger.getLogger(Ban_achats.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            req2="select num_service from `service` where nom_service=?";
+            try {
+                
+                prepared=conx.prepareStatement(req2);
+                prepared.setString(1, jTextField_service.getText());
+                result=prepared.executeQuery();
+                while(result.next())
+                {
+                    numero=result.getString("num_service");
+                }
+                JOptionPane.showMessageDialog(null,numero);
+            } catch (SQLException ex) {
+                Afficher_table();
+                Logger.getLogger(Ban_achats.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            try {
+               SimpleDateFormat dateFormat=new SimpleDateFormat("yyyy-MM-dd");
+               String date = dateFormat.format(jDateChooser1.getDate());
+                req="UPDATE `achat` SET `qte_demande`=?,`date_achat`=?,`code_article`=? WHERE `num_service`=?";              
+                prepared=conx.prepareStatement(req);
+                prepared.setString(1, jTextField_Qte.getText());
+                prepared.setString(2,date);
+                prepared.setString(3, code);
+                prepared.setString(4, numero);
+                //prepared.execute();
+                JOptionPane.showMessageDialog(null,prepared);
+                JOptionPane.showMessageDialog(null,"Service est modifier avec succès");
+
+            } catch (SQLException ex) {
+
+                Afficher_table();
+                Logger.getLogger(Service.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            Afficher_table();
+            
+            
+        
+        
+        
+        
+        }
+        
+        
+        
+    }//GEN-LAST:event_jButton2ActionPerformed
 
     /**
      * @param args the command line arguments
